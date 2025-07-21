@@ -12,7 +12,7 @@ import UserManagement from 'views/dashboard/UserManagement';
 import AgentManagement from 'views/dashboard/AgentManagement';
 import PageManagement from 'views/dashboard/PageManagement/PageManagement';
 import Banners from 'views/dashboard/Banners';
-import Contacts from 'views/pages/Contacts';
+import Leads from 'views/pages/Contacts';
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const SeoManagement = Loadable(lazy(() => import('views/dashboard/SeoManagement')));
@@ -139,10 +139,10 @@ const MainRoutes = {
       )
     },
     {
-      path: '/Contacts',
+      path: '/Leads',
       element: (
         <ProtectedRoute>
-          <Contacts />
+          <Leads />
         </ProtectedRoute>
       )
     },

@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Table, 
-  Button, 
-  Modal, 
-  Form, 
-  Input, 
-  message, 
-  Space, 
-  Popconfirm,
-  Card
-} from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { seoService } from 'api/seo';
+import { pagesService } from 'api/pages';
+
+const { Title } = Typography;
 
 const SeoManagement = () => {
   const [seoData, setSeoData] = useState([]);
@@ -19,11 +12,13 @@ const SeoManagement = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState(null);
+  const [pages, setPages] = useState([]);
+  const [search, setSearch] = useState('');
 
   const fetchSeoData = async () => {
     try {
       setLoading(true);
-      const data = await seoService.getAllSeo();
+      const data = await seoService.getAllSEO();
       setSeoData(data);
     } catch (error) {
       message.error('Failed to fetch SEO data');
@@ -34,6 +29,16 @@ const SeoManagement = () => {
 
   useEffect(() => {
     fetchSeoData();
+    // Fetch pages for the select dropdown
+    const fetchPages = async () => {
+      try {
+        const data = await pagesService.getAll();
+        setPages(data);
+      } catch (error) {
+        message.error('Failed to fetch pages');
+      }
+    };
+    fetchPages();
   }, []);
 
   const handleAdd = () => {
@@ -50,7 +55,7 @@ const SeoManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      await seoService.deleteSeo(id);
+      await seoService.deleteSEO(id);
       message.success('SEO entry deleted successfully');
       fetchSeoData();
     } catch (error) {
@@ -61,10 +66,10 @@ const SeoManagement = () => {
   const handleSubmit = async (values) => {
     try {
       if (editingId) {
-        await seoService.updateSeo(editingId, values);
+        await seoService.updateSEO(editingId, values);
         message.success('SEO entry updated successfully');
       } else {
-        await seoService.createSeo(values);
+        await seoService.createSEO(values);
         message.success('SEO entry created successfully');
       }
       setModalVisible(false);
@@ -74,11 +79,18 @@ const SeoManagement = () => {
     }
   };
 
+  // Filter SEO data by search
+  const filteredData = seoData.filter(entry =>
+    entry.pageName?.toLowerCase().includes(search.toLowerCase())
+  );
+
   const columns = [
     {
-      title: 'Page Title',
-      dataIndex: 'pageTitle',
-      key: 'pageTitle',
+      title: 'Page Name',
+      dataIndex: 'pageName',
+      key: 'pageName',
+      sorter: (a, b) => a.pageName.localeCompare(b.pageName),
+      render: text => <b>{text}</b>
     },
     {
       title: 'Meta Description',
@@ -87,15 +99,10 @@ const SeoManagement = () => {
       ellipsis: true,
     },
     {
-      title: 'Keywords',
-      dataIndex: 'keywords',
-      key: 'keywords',
+      title: 'Meta Keyword',
+      dataIndex: 'metaKeyword',
+      key: 'metaKeyword',
       ellipsis: true,
-    },
-    {
-      title: 'URL',
-      dataIndex: 'url',
-      key: 'url',
     },
     {
       title: 'Actions',
@@ -106,6 +113,7 @@ const SeoManagement = () => {
             type="primary"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
+            size="small"
           >
             Edit
           </Button>
@@ -115,7 +123,7 @@ const SeoManagement = () => {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger icon={<DeleteOutlined />}>
+            <Button danger icon={<DeleteOutlined />} size="small">
               Delete
             </Button>
           </Popconfirm>
@@ -125,74 +133,89 @@ const SeoManagement = () => {
   ];
 
   return (
-    <Card title="SEO Management" style={{ margin: '20px' }}>
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={handleAdd}
-        style={{ marginBottom: '20px' }}
-      >
-        Add New SEO Entry
-      </Button>
-
+    <Card
+      title={<Title level={4} style={{ margin: 0 }}>SEO Management</Title>}
+      style={{ margin: '20px', boxShadow: '0 2px 8px #f0f1f2' }}
+      extra={
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          Add SEO
+        </Button>
+      }
+    >
+      <Space style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search by Page Name"
+          prefix={<SearchOutlined />}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          allowClear
+          style={{ width: 240 }}
+        />
+      </Space>
       <Table
         columns={columns}
-        dataSource={seoData}
+        dataSource={filteredData}
         loading={loading}
         rowKey="_id"
         pagination={{ pageSize: 10 }}
+        bordered
+        size="middle"
+        style={{ background: '#fff', borderRadius: 8 }}
       />
-
       <Modal
-        title={editingId ? 'Edit SEO Entry' : 'Add New SEO Entry'}
+        title={editingId ? 'Edit SEO Entry' : 'Add SEO Entry'}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}
+        destroyOnClose
       >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
+          initialValues={{ pageName: '', metaDescription: '', metaKeyword: '' }}
         >
           <Form.Item
-            name="pageTitle"
-            label="Page Title"
-            rules={[{ required: true, message: 'Please enter page title' }]}
+            name="pageName"
+            label="Page Name"
+            rules={[{ required: true, message: 'Please select a page' }]}
           >
-            <Input />
+            <Select
+              showSearch
+              placeholder="Select a page"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {pages.map(page => (
+                <Select.Option key={page._id} value={page.name || page.title || page.pageName}>
+                  {page.name || page.title || page.pageName}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
-
           <Form.Item
             name="metaDescription"
             label="Meta Description"
             rules={[{ required: true, message: 'Please enter meta description' }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={4} placeholder="Meta description for SEO..." />
           </Form.Item>
-
           <Form.Item
-            name="keywords"
-            label="Keywords"
-            rules={[{ required: true, message: 'Please enter keywords' }]}
+            name="metaKeyword"
+            label="Meta Keyword"
+            rules={[{ required: true, message: 'Please enter meta keyword' }]}
           >
-            <Input />
+            <Input placeholder="Meta keywords, comma separated" />
           </Form.Item>
-
-          <Form.Item
-            name="url"
-            label="URL"
-            rules={[{ required: true, message: 'Please enter URL' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item>
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
             <Space>
-              <Button type="primary" htmlType="submit">
-                {editingId ? 'Update' : 'Create'}
-              </Button>
               <Button onClick={() => setModalVisible(false)}>
                 Cancel
+              </Button>
+              <Button type="primary" htmlType="submit">
+                {editingId ? 'Update' : 'Create'}
               </Button>
             </Space>
           </Form.Item>

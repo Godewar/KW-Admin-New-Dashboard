@@ -90,12 +90,6 @@ export default function AntLayout() {
       path: '/dashboard/users'
     },
     {
-      key: 'agent-management',
-      icon: <TeamOutlined />,
-      label: 'Manage Agent',
-      path: '/dashboard/Agents'
-    },
-    {
       key: 'system-settings',
       icon: <SettingOutlined />,
       label: 'System Settings',

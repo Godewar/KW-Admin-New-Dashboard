@@ -354,7 +354,7 @@ const AgentManagement = () => {
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle2" color="textSecondary">Last Name</Typography>
                   <Typography variant="body1">{selectedAgentDetails.lastName}</Typography>
-                </Grid>
+                  </Grid>
               </Grid>
             </Box>
           )}

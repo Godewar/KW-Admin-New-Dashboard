@@ -63,6 +63,8 @@ const BlogManagement = () => {
     try {
       setLoading(true);
       const response = await blogService.getAllBlogs();
+
+      console.log(response);
       setBlogs(response);
     } catch (error) {
       showMessage('error', 'Failed to fetch blogs');

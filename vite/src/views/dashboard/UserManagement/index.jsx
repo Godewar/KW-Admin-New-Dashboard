@@ -135,7 +135,7 @@ const UserManagement = () => {
       }
       if (isEditing && !dataToSend.password) {
         delete dataToSend.password;
-      }
+        }
       if (isEditing) {
         await userService.updateUser(selectedUser._id, dataToSend);
         showMessage('success', 'User updated successfully!');
@@ -246,15 +246,15 @@ const UserManagement = () => {
               )}
               {isEditing && (
                 <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
+                <TextField
+                  fullWidth
                     label="Password (leave blank to keep current)"
                     name="password"
                     type="password"
                     value={formData.password}
-                    onChange={handleChange}
-                  />
-                </Grid>
+                  onChange={handleChange}
+                />
+              </Grid>
               )}
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
@@ -380,15 +380,15 @@ const UserManagement = () => {
                   <TableRow key={user._id}>
                     <TableCell>
                       {user.profileImage ? (
-                        <Avatar
+                      <Avatar
                           src={user.profileImage.startsWith('http') ? user.profileImage : `http://localhost:5000/${user.profileImage.replace(/^\\?/, '')}`}
-                          alt={user.name}
+                        alt={user.name}
                           sx={{ width: 40, height: 40 }}
                         />
                       ) : (
                         <Avatar sx={{ width: 40, height: 40 }}>
                           <PersonIcon />
-                        </Avatar>
+                      </Avatar>
                       )}
                     </TableCell>
                     <TableCell>{user.name}</TableCell>
@@ -431,15 +431,15 @@ const UserManagement = () => {
             <Box sx={{ mt: 2 }}>
               <Box sx={{ textAlign: 'center', mb: 2 }}>
                 {selectedUserDetails.profileImage ? (
-                  <Avatar
+                <Avatar
                     src={selectedUserDetails.profileImage.startsWith('http') ? selectedUserDetails.profileImage : `http://localhost:5000/${selectedUserDetails.profileImage.replace(/^\\?/, '')}`}
-                    alt={selectedUserDetails.name}
+                  alt={selectedUserDetails.name}
                     sx={{ width: 80, height: 80, margin: 'auto' }}
                   />
                 ) : (
                   <Avatar sx={{ width: 80, height: 80, margin: 'auto' }}>
                     <PersonIcon />
-                  </Avatar>
+                </Avatar>
                 )}
               </Box>
               <Typography variant="h6" align="center">{selectedUserDetails.name}</Typography>

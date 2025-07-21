@@ -107,12 +107,6 @@ export default function MainLayout() {
       ]
     },
     {
-      key: 'banners',
-      icon: <InfoCircleOutlined   style={{ fontSize: '20px', color: '#faad14' }} />,
-      label: 'Banners',
-      path: '/dashboard/banners'
-    },
-    {
       key: 'blog-manager',
       icon: <FileTextIcon style={{ fontSize: '20px', color: '#eb2f96' }} />,
       label: 'Blog Management',
@@ -144,12 +138,6 @@ export default function MainLayout() {
       path: '/dashboard/users'
     },
     {
-      key: 'agent-management',
-      icon: <TeamIcon2 style={{ fontSize: '20px', color: '#faad14' }} />,
-      label: 'Manage Agent',
-      path: '/dashboard/Agents'
-    },
-    {
       key: 'system-settings',
       icon: <SettingIcon2 style={{ fontSize: '20px', color: '#08979c' }} />,
       label: 'System Settings',
@@ -159,10 +147,28 @@ export default function MainLayout() {
       type: 'divider'
     },
     {
-      key: 'Contacts',
+      key: 'Leads',
       icon: <ContactsOutlined style={{ fontSize: '20px', color: '#1890ff' }} />,
-      label: 'Contacts',
-      path: '/Contacts'
+      label: 'Leads',
+      path: '/Leads'
+    },
+    {
+      key: 'instant-valuation',
+      icon: <BarChartOutlined style={{ fontSize: '20px', color: '#722ed1' }} />,
+      label: 'Instant Valuation',
+      path: '/dashboard/instant-valuation'
+    },
+    {
+      key: 'appointment',
+      icon: <TeamOutlined style={{ fontSize: '20px', color: '#faad14' }} />,
+      label: 'Appointment',
+      path: '/dashboard/appointment'
+    },
+    {
+      key: 'join-us',
+      icon: <UserSwitchOutlined style={{ fontSize: '20px', color: '#13c2c2' }} />,
+      label: 'Join Us',
+      path: '/dashboard/join-us'
     },
     {
       key: 'logout',
