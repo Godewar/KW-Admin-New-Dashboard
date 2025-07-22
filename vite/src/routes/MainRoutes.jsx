@@ -13,6 +13,10 @@ import AgentManagement from 'views/dashboard/AgentManagement';
 import PageManagement from 'views/dashboard/PageManagement/PageManagement';
 import Banners from 'views/dashboard/Banners';
 import Leads from 'views/pages/Contacts';
+import Appointment from '../views/pages/Appointment';
+import InstantValuation from '../views/pages/InstantValuation';
+import JoinUs from '../views/pages/JoinUs';
+import TeamManagement from '../views/pages/TeamManagement';
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const SeoManagement = Loadable(lazy(() => import('views/dashboard/SeoManagement')));
@@ -110,7 +114,39 @@ const MainRoutes = {
               <PageManagement />
             </ProtectedRoute>
           )
-        }
+        },
+        {
+          path: 'appointment',
+          element: (
+            <ProtectedRoute>
+              <Appointment />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: 'instant-valuation',
+          element: (
+            <ProtectedRoute>
+              <InstantValuation />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: 'join-us',
+          element: (
+            <ProtectedRoute>
+              <JoinUs />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: 'team-management',
+          element: (
+            <ProtectedRoute>
+              <TeamManagement />
+            </ProtectedRoute>
+          )
+        },
       ]
     },
   
@@ -139,10 +175,18 @@ const MainRoutes = {
       )
     },
     {
-      path: '/Leads',
+      path: '/leads',
       element: (
         <ProtectedRoute>
           <Leads />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/appointment',
+      element: (
+        <ProtectedRoute>
+          <Appointment />
         </ProtectedRoute>
       )
     },
@@ -167,3 +211,4 @@ const MainRoutes = {
 };
 
 export default MainRoutes;
+   

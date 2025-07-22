@@ -71,31 +71,6 @@ const pages = {
       color: '#8e24aa'
     },
     {
-      id: 'listings-services',
-      title: 'Listings & Services',
-      type: 'collapse',
-      icon: icons.listing,
-      color: '#00acc1',
-      children: [
-        {
-          id: 'all-listings',
-          title: 'All Listings',
-          type: 'item',
-          url: '/dashboard/listings',
-          icon: icons.chevronRight,
-          color: '#00acc1'
-        },
-        {
-          id: 'service-catalog',
-          title: 'Service Catalog',
-          type: 'item',
-          url: '/dashboard/services',
-          icon: icons.chevronRight,
-          color: '#00acc1'
-        }
-      ]
-    },
-    {
       id: 'user-management',
       title: 'Manage User',
       type: 'item',
@@ -103,13 +78,37 @@ const pages = {
       icon: icons.user,
       color: '#f44336'
     },
-     {
-      id: 'agent-management',
-      title: 'Manage Agent',
+    //  {
+    //   id: 'agent-management',
+    //   title: 'Manage Agent',
+    //   type: 'item',
+    //   url: '/dashboard/Agents',
+    //   icon: icons.user,
+    //   color: '#f44336'
+    // },
+    {
+      id: 'appointment',
+      title: 'Appointment',
       type: 'item',
-      url: '/dashboard/Agents',
-      icon: icons.user,
-      color: '#f44336'
+      url: '/appointment',
+      icon: icons.listing,
+      color: '#00acc1'
+    },
+    {
+      id: 'team-management',
+      title: 'Team Management',
+      type: 'item',
+      url: '/dashboard/team-management',
+      icon: icons.listing,
+      color: '#00acc1'
+    },
+    {
+      id: 'instant-valuation',
+      title: 'Instant Valuation',
+      type: 'item',
+      url: '/dashboard/instant-valuation',
+      icon: icons.listing,
+      color: '#00acc1'
     },
     {
       id: 'system-settings',
@@ -126,6 +125,14 @@ const pages = {
       url: '/logout',
       icon: icons.logout,
       color: '#757575'
+    },
+    {
+      id: 'join-us',
+      title: 'Join Us',
+      type: 'item',
+      url: '/dashboard/join-us',
+      icon: icons.listing,
+      color: '#00acc1'
     }
   ]
 };
