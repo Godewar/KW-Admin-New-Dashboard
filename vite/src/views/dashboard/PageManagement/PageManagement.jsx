@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {
+  Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, InputLabel, FormControl,
+  IconButton, CircularProgress, Stack, Tooltip
+} from '@mui/material';
+import { Add, Edit, Delete } from '@mui/icons-material';
 
 const defaultForm = {
   pageName: '',
@@ -8,7 +14,7 @@ const defaultForm = {
 };
 
 const bannerPageNames = [
-  'Home Page', 'Properties', 'Active Properties', 'Sold Properties', 'Rent Properties',
+  'Home Page', 'Properties', 'Active Properties','Active Listings', 'Sold Properties', 'Rent Properties',
   'Auction Properties', 'New Development Properties', 'Market Center', 'Agent', 'Seller',
   'Buyer', 'Tenant', 'Franchise', 'Our Culture', 'Seller Guide', 'Buyer Guide', 'Tenant Guide',
   'KW Training', 'Jasmin', 'Jeddah', 'Five Steps To Sell', 'About Us', 'Contact Us', 'Join Us',
@@ -23,6 +29,7 @@ export default function PageManagement() {
   const [editId, setEditId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [deleteDialog, setDeleteDialog] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   // Fetch all pages for the table
   const fetchPages = async () => {
@@ -48,9 +55,11 @@ export default function PageManagement() {
         backgroundOverlayContent: page.backgroundOverlayContent || '',
         backgroundImage: null, // Don't prefill file input
       });
+      setPreview(page.backgroundImage ? `http://localhost:5000/${page.backgroundImage.replace(/\\/g, '/')}` : null);
       setEditId(page._id);
     } else {
       setForm(defaultForm);
+      setPreview(null);
       setEditId(null);
     }
     setOpen(true);
@@ -61,6 +70,7 @@ export default function PageManagement() {
     setForm(defaultForm);
     setEditId(null);
     setOpen(false);
+    setPreview(null);
   };
 
   // Handle form field changes
@@ -68,13 +78,15 @@ export default function PageManagement() {
     const { name, value, type, files } = e.target;
     if (type === 'file') {
       setForm({ ...form, [name]: files[0] });
+      setPreview(files[0] ? URL.createObjectURL(files[0]) : null);
     } else {
       setForm({ ...form, [name]: value });
     }
   };
 
   // Save (create or update) a page
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => {
@@ -116,110 +128,122 @@ export default function PageManagement() {
   };
 
   return (
-    <div style={{ padding: 32 }}>
-      <h2>Page Management</h2>
-      <button onClick={() => handleOpen()}>Add Page</button>
-      <table border="1" cellPadding="8" style={{ width: '100%', marginTop: 16 }}>
-        <thead>
-          <tr>
-            <th>Page Name</th>
-            <th>Overlay Content</th>
-            <th>Background Image</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-            {pages.map((row) => (
-            <tr key={row._id}>
-              <td>{row.pageName}</td>
-              <td>{row.backgroundOverlayContent}</td>
-              <td>
-                {row.backgroundImage && (
-                  <img
-                    src={`http://localhost:5000/${row.backgroundImage.replace(/\\/g, '/')}`}
-                    alt="bg"
-                    style={{ width: 80, height: 40, objectFit: 'cover' }}
-                  />
-                )}
-              </td>
-              <td>
-                <button onClick={() => handleOpen(row)}>Edit</button>
-                <button onClick={() => { setDeleteId(row._id); setDeleteDialog(true); }}>Delete</button>
-              </td>
-            </tr>
-            ))}
-            {pages.length === 0 && (
-            <tr>
-              <td colSpan={4} align="center">No pages found.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
+    <Box sx={{ p: 4, maxWidth: '1200px', mx: 'auto', bgcolor: '#fafafa', minHeight: '100vh' }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h4" fontWeight="bold" color="text.primary">Page Management</Typography>
+        <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()}>Add Page</Button>
+      </Stack>
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+          <TableContainer>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Page Name</TableCell>
+                  <TableCell>Overlay Content</TableCell>
+                  <TableCell>Background Image</TableCell>
+                  <TableCell align="center">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {pages.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">No pages found.</TableCell>
+                  </TableRow>
+                ) : pages.map((row) => (
+                  <TableRow key={row._id} hover>
+                    <TableCell>{row.pageName}</TableCell>
+                    <TableCell>
+                      <Tooltip title={row.backgroundOverlayContent || ''} arrow>
+                        <span style={{ display: 'inline-block', maxWidth: 220, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {row.backgroundOverlayContent}
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      {row.backgroundImage && (
+                        <img
+                          src={`http://localhost:5000/${row.backgroundImage.replace(/\\/g, '/')}`}
+                          alt="bg"
+                          style={{ width: 80, height: 40, objectFit: 'cover', borderRadius: 4, border: '1px solid #eee' }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton color="primary" onClick={() => handleOpen(row)}><Edit /></IconButton>
+                      <IconButton color="error" onClick={() => { setDeleteId(row._id); setDeleteDialog(true); }}><Delete /></IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
       {/* Add/Edit Dialog */}
-      {open && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{ background: '#fff', padding: 28, borderRadius: 10, minWidth: 480, maxWidth: '90vw' }}>
-            <h3 style={{ marginBottom: 32 }}>{editId ? 'Edit Page' : 'Add Page'}</h3>
-            <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
-              <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 8 }}>Page Name:</label>
-                <select name="pageName" value={form.pageName} onChange={handleChange} required style={{ width: '100%', padding: 8, fontSize: 16 }}>
-                  <option value="">Select a page name</option>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>{editId ? 'Edit Page' : 'Add Page'}</DialogTitle>
+        <form onSubmit={handleSave} encType="multipart/form-data">
+          <DialogContent>
+            <Stack spacing={2}>
+              <FormControl fullWidth required>
+                <InputLabel>Page Name</InputLabel>
+                <Select
+                  name="pageName"
+                  value={form.pageName}
+                  label="Page Name"
+                  onChange={handleChange}
+                >
+                  <MenuItem value=""><em>Select a page name</em></MenuItem>
                   {bannerPageNames.map(name => (
-                    <option key={name} value={name}>{name}</option>
+                    <MenuItem key={name} value={name}>{name}</MenuItem>
                   ))}
-                </select>
-              </div>
-              <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 8 }}>Background Overlay Content:</label>
-                <textarea
-                  name="backgroundOverlayContent"
-                  value={form.backgroundOverlayContent}
-                  onChange={handleChange}
-                  rows={6}
-                  style={{ width: '100%', padding: 10, fontSize: 16, resize: 'vertical', minHeight: 120 }}
-                />
-              </div>
-              <div style={{ marginBottom: 32 }}>
-                <label style={{ display: 'block', marginBottom: 8 }}>Background Image:</label>
-                <input
-                  type="file"
-                  name="backgroundImage"
-                  accept="image/*"
-                  onChange={handleChange}
-                  style={{ fontSize: 16 }}
-                />
+                </Select>
+              </FormControl>
+              <TextField
+                label="Background Overlay Content"
+                name="backgroundOverlayContent"
+                value={form.backgroundOverlayContent}
+                onChange={handleChange}
+                multiline
+                minRows={4}
+                fullWidth
+              />
+              <Box>
+                <Button variant="outlined" component="label">
+                  Upload Background Image
+                  <input type="file" name="backgroundImage" accept="image/*" hidden onChange={handleChange} />
+                </Button>
                 {form.backgroundImage && typeof form.backgroundImage === 'object' && (
                   <span style={{ marginLeft: 12 }}>{form.backgroundImage.name}</span>
                 )}
-              </div>
-              <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
-                <button type="button" onClick={handleClose} style={{ padding: '10px 24px', fontSize: 16 }}>Cancel</button>
-                <button type="submit" style={{ marginLeft: 8, padding: '10px 24px', fontSize: 16 }}>Save</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+                {preview && (
+                  <img src={preview} alt="preview" style={{ marginLeft: 16, width: 60, height: 30, objectFit: 'cover', borderRadius: 4, border: '1px solid #eee' }} />
+                )}
+              </Box>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit" variant="contained">{editId ? 'Update' : 'Add'}</Button>
+          </DialogActions>
+        </form>
+      </Dialog>
       {/* Delete Confirmation Dialog */}
-      {deleteDialog && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{ background: '#fff', padding: 24, borderRadius: 8 }}>
-            <h3>Delete Page</h3>
-            <p>Are you sure you want to delete this page?</p>
-            <button onClick={() => setDeleteDialog(false)}>Cancel</button>
-            <button onClick={handleDelete} style={{ marginLeft: 8, color: 'red' }}>Delete</button>
-          </div>
-        </div>
-      )}
-    </div>
+      <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
+        <DialogTitle>Delete Page</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this page?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog(false)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 } 

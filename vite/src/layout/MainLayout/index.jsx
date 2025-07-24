@@ -113,25 +113,6 @@ export default function MainLayout() {
       path: '/dashboard/blog'
     },
     {
-      key: 'listings-services',
-      icon: <ShopIcon style={{ fontSize: '20px', color: '#fa541c' }} />,
-      label: 'Listings & Services',
-      children: [
-        {
-          key: 'all-listings',
-          icon: <BarChartOutlined style={{ fontSize: '18px', color: '#2f54eb' }} />,
-          label: 'All Listings',
-          path: '/dashboard/listings'
-        },
-        {
-          key: 'service-catalog',
-          icon: <PictureOutlined style={{ fontSize: '18px', color: '#a0d911' }} />,
-          label: 'Service Catalog',
-          path: '/dashboard/services'
-        }
-      ]
-    },
-    {
       key: 'user-management',
       icon: <UserIcon style={{ fontSize: '20px', color: '#f5222d' }} />,
       label: 'Manage User',
@@ -163,6 +144,12 @@ export default function MainLayout() {
       icon: <TeamOutlined style={{ fontSize: '20px', color: '#faad14' }} />,
       label: 'Appointment',
       path: '/dashboard/appointment'
+    },
+    {
+      key: 'team-management',
+      icon: <TeamOutlined style={{ fontSize: '20px', color: '#00acc1' }} />,
+      label: 'Team Management',
+      path: '/dashboard/team-management'
     },
     {
       key: 'join-us',
